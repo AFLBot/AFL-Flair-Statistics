@@ -6,7 +6,7 @@ from datetime import datetime
 from praw import Reddit
 
 user = 'rAFLgamethread'
-password = 'invalid'
+password = 'ENTERPASSWORDHERE'
 srname = 'AFL'
 edit_reason = 'Updated by /u/rAFLgamethread bot'
 
