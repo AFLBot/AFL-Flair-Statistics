@@ -128,28 +128,30 @@ flair_templates = {
 }
 
 club_templates = {
-    'Adelaide',
-    'Brisbane',
-    'Carlton',
-    'Collingwood',
-    'Essendon',
-    'Fremantle',
-    'Geelong',
-    'Gold Coast',
-    'Greater Western Sydney',
-    'Hawthorn',
-    'Melbourne',
-    'North Melbourne',
-    'Richmond',
-    'St Kilda',
-    'Sydney',
-    'West Coast',
-    'Western Bulldogs'
+    'adelaide': 'Adelaide',
+    'brisbane': 'Brisbane',
+    'carlton': 'Carlton',
+    'collingwood': 'Collingwood',
+    'essendon': 'Essendon',
+    'fremantle': 'Fremantle',
+    'geelong': 'Geelong',
+    'goldcoast': 'Gold Coast',
+    'greaterwesternsydney': 'Greater Western Sydney',
+    'hawthorn': 'Hawthorn',
+    'melbourne': 'Melbourne',
+    'northmelbourne': 'North Melbourne',
+    'portadelaide' : 'Port Adelaide',
+    'richmond': 'Richmond',
+    'stkilda': 'St Kilda',
+    'sydney': 'Sydney',
+    'westcoast': 'West Coast',
+    'westernbulldogs': 'Western Bulldogs'
 }
 
 stats = {}
 clubstats = {}
 total = 0
+club_total = 0
 
 # cycle through the user flair list
 for item in sr.get_flair_list(limit=9000):
@@ -159,11 +161,19 @@ for item in sr.get_flair_list(limit=9000):
     if style not in flair_templates:
         sys.stderr.write("Ignore %s\n" % style)
         continue
-    if style in club_templates:
+
+    # strip flair number
+    club = ''.join([i for i in style if not i.isdigit()])
+
+    # club totals
+    if club in club_templates:
         try:
-            clubstats[club_templates.index(style)] +=1
+            clubstats[club] +=1
         except KeyError:
-            clubstats[club_templates.index(style)] = 1
+            clubstats[club] = 1
+        club_total += 1
+    
+    # flair totals
     try:
         stats[style] += 1
     except KeyError:
@@ -182,12 +192,13 @@ clubstats = []
 for style, count in items:
     stats.append("    %5d (%5.1f%%) %s" % (count, float(count*100.0)/total, flair_templates[style]))
 stats.append("    %5d (100.0%%) %s" % (total, "Total"))
-stats.append("*Updated %s*" % datetime.utcnow().strftime("%Y-%m-%d %H:%MZ"))
 
 # append club totals to output
 for style, count in clubitems:
-    clubstats.append("    %5d (%5.1f%%) Total Club Flair - %s" % (count, float(count*100.0)/total, flair_templates[style]))
-clubstats.append("    %5d (100.0%%) %s" % (total, "Total"))
+    clubstats.append("    %5d (%5.1f%%) Total Club Flair - %s" % (count, float(count*100.0)/club_total, flair_templates[style]))
+clubstats.append("    %5d (100.0%%) %s" % (club_total, "Club Total"))
+
+# latest update
 clubstats.append("*Updated %s*" % datetime.utcnow().strftime("%Y-%m-%d %H:%MZ"))
 
 # print console output
